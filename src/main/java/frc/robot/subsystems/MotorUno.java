@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import java.util.function.DoubleSupplier;
 
+import com.revrobotics.CANSparkMax;
+
 public class MotorUno extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
   final Talon arm_motor = new Talon(0);

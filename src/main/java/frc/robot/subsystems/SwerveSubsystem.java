@@ -1,6 +1,6 @@
 package frc.robot.subsystems;
 
-
+import com.ctre.phoenix.sensors.CANCoder;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
 // import edu.wpi.first.math.controller.HolonomicDriveController;
@@ -19,9 +19,13 @@ import frc.robot.Constants.DriveConstants;
 // import edu.wpi.first.math.trajectory.Trajectory;
 // import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 
-
-
 public class SwerveSubsystem extends SubsystemBase {
+
+    private final CANCoder m_cancoder1 = new CANCoder(30);
+    private final CANCoder m_cancoder2 = new CANCoder(31);
+    private final CANCoder m_cancoder3 = new CANCoder(32);
+    private final CANCoder m_cancoder4 = new CANCoder(33);
+
     private final SwerveModule frontLeft = new SwerveModule(
             DriveConstants.kFrontLeftDriveMotorPort,
             DriveConstants.kFrontLeftTurningMotorPort,
@@ -60,21 +64,16 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private final AHRS gyro = new AHRS(SPI.Port.kMXP);
 
-    private SwerveModulePosition[] abc = {backLeft.getPosition(), backRight.getPosition(), frontLeft.getPosition(), frontRight.getPosition()};
+    private SwerveModulePosition[] abc = { backLeft.getPosition(), backRight.getPosition(), frontLeft.getPosition(),
+            frontRight.getPosition() };
     private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(DriveConstants.kDriveKinematics,
             new Rotation2d(0), abc);
 
-
-
-
-    // public HolonomicDriveController hdc = new HolonomicDriveController(null, null, null);
-
-
-
-
+    // public HolonomicDriveController hdc = new HolonomicDriveController(null,
+    // null, null);
 
     // public SwerveDriveKinematics getKinematics() {
-    //     return kin;
+    // return kin;
     // }
 
     public SwerveSubsystem() {
@@ -86,8 +85,6 @@ public class SwerveSubsystem extends SubsystemBase {
             }
         }).start();
     }
-
-  
 
     public void zeroHeading() {
         gyro.reset();
@@ -111,9 +108,16 @@ public class SwerveSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        odometer.update(getRotation2d(), abc);
+        odometer.update(getRotation2d(), new SwerveModulePosition[]{frontLeft.getPosition(), 
+            frontRight.getPosition(), 
+            backLeft.getPosition(), 
+            backRight.getPosition()});
         SmartDashboard.putNumber("Robot Heading", getHeading());
         SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
+        SmartDashboard.putNumber("EncoderReading1", m_cancoder1.getAbsolutePosition());
+        SmartDashboard.putNumber("EncoderReading2", m_cancoder2.getAbsolutePosition());
+        SmartDashboard.putNumber("EncoderReading3", m_cancoder3.getAbsolutePosition());
+        SmartDashboard.putNumber("EncoderReading4", m_cancoder4.getAbsolutePosition());
     }
 
     public void stopModules() {
@@ -131,4 +135,3 @@ public class SwerveSubsystem extends SubsystemBase {
         backRight.setDesiredState(desiredStates[3]);
     }
 }
-
